@@ -26,6 +26,14 @@ jobs:
         with:
           xcode-version: "16.4.0"
 
+      - name: Install Valhalla's Python build deps
+        # valhalla/locales/po_tools.py generates src/odin/locales.h at build time and
+        # imports polib. It arrived with 3.8.x -- 3.6.3 had no such dependency, which is
+        # why these workflows never installed it. Upstream valhalla installs the same
+        # package in its own CI (scripts/install-linux-deps.sh, and `pip install ... polib`
+        # in linux.yml); this is the Apple/Android side of that.
+        run: python3 -m pip install --break-system-packages polib
+
       - name: Setup VCPKG
         run: |
           git clone https://github.com/microsoft/vcpkg && git -C vcpkg checkout 2025.10.17
