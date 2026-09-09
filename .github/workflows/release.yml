@@ -202,7 +202,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
-          token: ${{ secrets.PAT }}
+          # Upstream uses a PAT here, almost certainly to satisfy branch protection on
+          # their main -- not to trigger workflows, since the auto-commit below carries
+          # [skip ci]. A fork inherits no secrets, so this resolved empty and checkout
+          # failed with "Input required and not supplied: token". The default token has
+          # the contents:write this job already declares, and our development branch is
+          # unprotected, so it is sufficient here and needs no credential minting.
+          token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Configure Git
         run: |
