@@ -2,7 +2,14 @@
 
 # Get the zip file of the xcframework from ci
 release_tag=$1
-release_url="https://github.com/Rallista/valhalla-mobile/releases/download/${release_tag}"
+# Derive the owner from the repository being built rather than hardcoding it. A release
+# cut from a fork was writing a manifest that pointed at UPSTREAM's releases, so SPM
+# resolved the right version and checksum and then 404'd fetching the binary from a repo
+# that has no such tag. GITHUB_REPOSITORY is set by Actions ("owner/name"); the fallback
+# keeps this working when run by hand, and upstream's own CI is unaffected because there
+# the variable already spells Rallista/valhalla-mobile.
+release_repo="${GITHUB_REPOSITORY:-Rallista/valhalla-mobile}"
+release_url="https://github.com/${release_repo}/releases/download/${release_tag}"
 xcframework_zip="valhalla-wrapper.xcframework.zip"
 
 # Get the checksum of the xcframework file.
